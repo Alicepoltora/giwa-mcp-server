@@ -1,0 +1,40 @@
+{
+  "name": "giwa-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for GIWA blockchain - AI agent tools for OP Stack L2 by Upbit",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "giwa-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "giwa",
+    "blockchain",
+    "evm",
+    "op-stack",
+    "ai-agent",
+    "web3"
+  ],
+  "author": "Alice",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "viem": "^2.31.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
