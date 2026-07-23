@@ -8,6 +8,12 @@ import { registerDojangTools } from "./tools/dojang.js";
 import { registerUpIdTools } from "./tools/upid.js";
 import { registerDeFiTools } from "./tools/defi.js";
 import { registerAATools } from "./tools/aa.js";
+import { registerBridgeTools } from "./tools/bridge.js";
+import { registerFaucetTools } from "./tools/faucet.js";
+import { registerAgentTools } from "./tools/agent.js";
+import { registerNftTools } from "./tools/nft.js";
+import { registerDevTools } from "./tools/devtools.js";
+import { registerAnalyticsTools } from "./tools/analytics.js";
 
 export interface GiwaMcpConfig {
   rpcUrl?: string;
@@ -20,8 +26,7 @@ export interface GiwaMcpConfig {
 export function createGiwaMcpServer(config: GiwaMcpConfig = {}): McpServer {
   const chain = getChain(config.chain || "giwa");
   const rpcUrl = config.rpcUrl || chain.rpcUrls.default.http[0];
-  const explorerApiUrl =
-    config.explorerApiUrl || `${chain.blockExplorers.default.url}/api`;
+  const explorerApiUrl = config.explorerApiUrl || `${chain.blockExplorers.default.url}/api`;
 
   const publicClient: PublicClient = createPublicClient({
     chain,
@@ -42,7 +47,7 @@ export function createGiwaMcpServer(config: GiwaMcpConfig = {}): McpServer {
 
   const mcpServer = new McpServer({
     name: "giwa-mcp-server",
-    version: "1.0.0",
+    version: "2.0.0",
   });
 
   registerEvmTools(mcpServer, publicClient, getWallet, explorerApiUrl);
@@ -51,6 +56,12 @@ export function createGiwaMcpServer(config: GiwaMcpConfig = {}): McpServer {
   registerUpIdTools(mcpServer, publicClient);
   registerDeFiTools(mcpServer, publicClient);
   registerAATools(mcpServer, publicClient, getWallet);
+  registerBridgeTools(mcpServer, publicClient, getWallet);
+  registerFaucetTools(mcpServer);
+  registerAgentTools(mcpServer, publicClient, getWallet);
+  registerNftTools(mcpServer, publicClient, getWallet);
+  registerDevTools(mcpServer, publicClient);
+  registerAnalyticsTools(mcpServer, publicClient);
 
   return mcpServer;
 }

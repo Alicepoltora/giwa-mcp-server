@@ -13,29 +13,89 @@ const mcpServer = createGiwaMcpServer({
 });
 
 const tools = [
-  { name: "giwa_get_balance", description: "Get native ETH balance", params: ["address"] },
-  { name: "giwa_get_token_balance", description: "Get ERC-20 token balance", params: ["address", "token"] },
-  { name: "giwa_get_transaction", description: "Get transaction details", params: ["hash"] },
-  { name: "giwa_get_block", description: "Get block info", params: ["blockNumber"] },
-  { name: "giwa_get_latest_block", description: "Get latest block number", params: [] },
-  { name: "giwa_read_contract", description: "Read contract data", params: ["address", "abi", "functionName", "args"] },
-  { name: "giwa_estimate_gas", description: "Estimate gas", params: ["to", "value", "data"] },
-  { name: "giwa_get_logs", description: "Get event logs", params: ["address", "fromBlock", "toBlock"] },
-  { name: "giwa_flashblocks_call", description: "Flashblocks call (~200ms)", params: ["to", "data"] },
-  { name: "giwa_flashblocks_get_balance", description: "Flashblocks balance (pending)", params: ["address"] },
-  { name: "giwa_dojang_get_attestation", description: "Get Dojang attestation", params: ["uid"] },
-  { name: "giwa_dojang_is_valid", description: "Check attestation validity", params: ["uid"] },
-  { name: "giwa_dojang_list_schemas", description: "List Dojang schemas", params: [] },
-  { name: "giwa_upid_resolve", description: "Resolve UP ID name", params: ["name"] },
-  { name: "giwa_upid_reverse", description: "Reverse resolve address", params: ["address"] },
-  { name: "giwa_get_token_info", description: "Get token info", params: ["address"] },
-  { name: "giwa_get_weth_balance", description: "Get WETH balance", params: ["address"] },
-  { name: "giwa_get_price_redstone", description: "Get price (RedStone)", params: ["token"] },
-  { name: "giwa_get_price_pyth", description: "Get price (Pyth)", params: ["priceId"] },
-  { name: "giwa_list_known_contracts", description: "List known contracts", params: [] },
-  { name: "giwa_aa_get_nonce", description: "Get AA nonce", params: ["sender", "key", "version"] },
-  { name: "giwa_aa_get_deposit", description: "Get AA deposit info", params: ["account", "version"] },
-  { name: "giwa_aa_list_entrypoints", description: "List EntryPoints", params: [] },
+  // EVM Core
+  { name: "giwa_get_balance", description: "Get native ETH balance", params: ["address"], category: "EVM" },
+  { name: "giwa_get_token_balance", description: "Get ERC-20 token balance", params: ["address", "token"], category: "EVM" },
+  { name: "giwa_get_transaction", description: "Get transaction details", params: ["hash"], category: "EVM" },
+  { name: "giwa_get_block", description: "Get block info", params: ["blockNumber"], category: "EVM" },
+  { name: "giwa_get_latest_block", description: "Get latest block number", params: [], category: "EVM" },
+  { name: "giwa_read_contract", description: "Read contract data", params: ["address", "abi", "functionName", "args"], category: "EVM" },
+  { name: "giwa_write_contract", description: "Write to contract (needs key)", params: ["address", "abi", "functionName", "args", "value"], category: "EVM" },
+  { name: "giwa_estimate_gas", description: "Estimate gas", params: ["to", "value", "data"], category: "EVM" },
+  { name: "giwa_transfer_eth", description: "Send ETH (needs key)", params: ["to", "amount"], category: "EVM" },
+  { name: "giwa_transfer_erc20", description: "Send tokens (needs key)", params: ["token", "to", "amount"], category: "EVM" },
+  { name: "giwa_multicall", description: "Batch contract reads", params: ["calls"], category: "EVM" },
+  { name: "giwa_get_logs", description: "Get event logs", params: ["address", "fromBlock", "toBlock"], category: "EVM" },
+  // Flashblocks
+  { name: "giwa_flashblocks_call", description: "Flashblocks call (~200ms)", params: ["to", "data"], category: "Flashblocks" },
+  { name: "giwa_flashblocks_get_balance", description: "Flashblocks balance (pending)", params: ["address"], category: "Flashblocks" },
+  { name: "giwa_flashblocks_get_logs", description: "Flashblocks logs (pending)", params: ["address", "fromBlock", "toBlock"], category: "Flashblocks" },
+  { name: "giwa_flashblocks_simulate", description: "Flashblocks simulate (~200ms)", params: ["from", "to", "data", "value"], category: "Flashblocks" },
+  { name: "giwa_flashblocks_estimate_gas", description: "Flashblocks gas estimate", params: ["from", "to", "data", "value"], category: "Flashblocks" },
+  // Dojang
+  { name: "giwa_dojang_get_attestation", description: "Get Dojang attestation", params: ["uid"], category: "Dojang" },
+  { name: "giwa_dojang_is_valid", description: "Check attestation validity", params: ["uid"], category: "Dojang" },
+  { name: "giwa_dojang_list_schemas", description: "List Dojang schemas", params: [], category: "Dojang" },
+  { name: "giwa_dojang_attest", description: "Create attestation (needs key)", params: ["schema", "recipient", "data", "revocable"], category: "Dojang" },
+  // UP ID
+  { name: "giwa_upid_resolve", description: "Resolve UP ID name", params: ["name"], category: "UP ID" },
+  { name: "giwa_upid_reverse", description: "Reverse resolve address", params: ["address"], category: "UP ID" },
+  { name: "giwa_upid_get_text", description: "Get UP ID text record", params: ["name", "key"], category: "UP ID" },
+  { name: "giwa_upid_get_contenthash", description: "Get UP ID contenthash", params: ["name"], category: "UP ID" },
+  // DeFi
+  { name: "giwa_get_token_info", description: "Get token info", params: ["address"], category: "DeFi" },
+  { name: "giwa_get_weth_balance", description: "Get WETH balance", params: ["address"], category: "DeFi" },
+  { name: "giwa_get_allowance", description: "Check token allowance", params: ["token", "owner", "spender"], category: "DeFi" },
+  { name: "giwa_get_price_redstone", description: "Get price (RedStone)", params: ["token"], category: "DeFi" },
+  { name: "giwa_get_price_pyth", description: "Get price (Pyth)", params: ["priceId"], category: "DeFi" },
+  { name: "giwa_list_known_contracts", description: "List known contracts", params: [], category: "DeFi" },
+  // AA
+  { name: "giwa_aa_get_nonce", description: "Get AA nonce", params: ["sender", "key", "version"], category: "AA" },
+  { name: "giwa_aa_get_deposit", description: "Get AA deposit info", params: ["account", "version"], category: "AA" },
+  { name: "giwa_aa_estimate_userop_gas", description: "Estimate UserOp gas", params: ["sender", "callData", "initCode"], category: "AA" },
+  { name: "giwa_aa_build_userop", description: "Build UserOperation", params: ["sender", "target", "value", "data", "initCode"], category: "AA" },
+  { name: "giwa_aa_list_entrypoints", description: "List EntryPoints", params: [], category: "AA" },
+  // Bridge
+  { name: "giwa_bridge_deposit_eth", description: "Deposit ETH L1→L2", params: ["amount"], category: "Bridge" },
+  { name: "giwa_bridge_withdraw_eth", description: "Withdraw ETH L2→L1", params: ["amount", "to"], category: "Bridge" },
+  { name: "giwa_bridge_estimate_time", description: "Estimate bridge time", params: ["direction"], category: "Bridge" },
+  { name: "giwa_bridge_get_status", description: "Check bridge tx status", params: ["txHash"], category: "Bridge" },
+  { name: "giwa_bridge_list_tokens", description: "List bridgeable tokens", params: [], category: "Bridge" },
+  // Faucet
+  { name: "giwa_faucet_info", description: "Get faucet info", params: [], category: "Faucet" },
+  { name: "giwa_faucet_check_balance", description: "Check address balance", params: ["address"], category: "Faucet" },
+  { name: "giwa_faucet_drip", description: "Request testnet ETH", params: ["address"], category: "Faucet" },
+  // AI Agent
+  { name: "giwa_agent_create_wallet", description: "Create agent wallet", params: [], category: "Agent" },
+  { name: "giwa_agent_generate_mnemonic", description: "Generate mnemonic", params: ["wordCount"], category: "Agent" },
+  { name: "giwa_agent_get_portfolio", description: "Get full portfolio", params: ["address"], category: "Agent" },
+  { name: "giwa_agent_get_tx_history", description: "Get tx history", params: ["address", "limit"], category: "Agent" },
+  { name: "giwa_agent_get_token_transfers", description: "Get token transfers", params: ["address", "contractAddress", "limit"], category: "Agent" },
+  { name: "giwa_agent_execute_strategy", description: "Execute multi-step strategy", params: ["steps"], category: "Agent" },
+  { name: "giwa_agent_estimate_strategy_cost", description: "Estimate strategy cost", params: ["steps"], category: "Agent" },
+  // NFT
+  { name: "giwa_nft_get_info", description: "Get NFT metadata", params: ["contract", "tokenId"], category: "NFT" },
+  { name: "giwa_nft_get_owner", description: "Get NFT owner", params: ["contract", "tokenId"], category: "NFT" },
+  { name: "giwa_nft_get_collection", description: "Get NFTs in collection", params: ["owner", "contract"], category: "NFT" },
+  { name: "giwa_nft_detect_standard", description: "Detect ERC-721/1155", params: ["contract"], category: "NFT" },
+  { name: "giwa_nft_transfer", description: "Transfer NFT (needs key)", params: ["contract", "tokenId", "to"], category: "NFT" },
+  { name: "giwa_nft_get_contract_info", description: "Get NFT collection info", params: ["contract"], category: "NFT" },
+  // Dev Tools
+  { name: "giwa_verify_contract", description: "Verify contract source", params: ["contractAddress", "sourceCode", "contractName", "compilerVersion"], category: "Dev" },
+  { name: "giwa_get_contract_source", description: "Get verified source code", params: ["address"], category: "Dev" },
+  { name: "giwa_decode_tx_input", description: "Decode tx calldata", params: ["data", "abi", "contractAddress"], category: "Dev" },
+  { name: "giwa_decode_event_log", description: "Decode event log", params: ["topics", "data", "abi"], category: "Dev" },
+  { name: "giwa_simulate_transaction", description: "Simulate transaction", params: ["from", "to", "value", "data"], category: "Dev" },
+  { name: "giwa_get_storage_slot", description: "Read storage slot", params: ["address", "slot"], category: "Dev" },
+  { name: "giwa_get_bytecode", description: "Get contract bytecode", params: ["address"], category: "Dev" },
+  { name: "giwa_get_transaction_receipt", description: "Get tx receipt + logs", params: ["hash"], category: "Dev" },
+  // Analytics
+  { name: "giwa_get_chain_stats", description: "Get chain statistics", params: [], category: "Analytics" },
+  { name: "giwa_get_token_holders", description: "Get top token holders", params: ["contractAddress", "limit"], category: "Analytics" },
+  { name: "giwa_get_token_transfers", description: "Get token transfers", params: ["contractAddress", "limit"], category: "Analytics" },
+  { name: "giwa_get_address_details", description: "Get address details", params: ["address"], category: "Analytics" },
+  { name: "giwa_get_block_range", description: "Get block range stats", params: ["fromBlock", "toBlock"], category: "Analytics" },
+  { name: "giwa_get_pending_transactions", description: "Get pending txs", params: [], category: "Analytics" },
 ];
 
 function generateHTML() {
@@ -106,7 +166,7 @@ function generateHTML() {
 
     <div class="stats">
       <div class="stat"><div class="stat-value">${tools.length}</div><div class="stat-label">MCP Tools</div></div>
-      <div class="stat"><div class="stat-value">6</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-value">12</div><div class="stat-label">Categories</div></div>
       <div class="stat"><div class="stat-value">~200ms</div><div class="stat-label">Flashblocks</div></div>
       <div class="stat"><div class="stat-value">1s</div><div class="stat-label">Block Time</div></div>
     </div>
@@ -151,15 +211,21 @@ function generateHTML() {
     </div>
 
     <div class="section">
-      <h2>Tools — Try It Live</h2>
-      <div class="tool-grid">
-        ${tools.map(t => `
-        <div class="tool-card" onclick="openTool('${t.name}', ${JSON.stringify(t.params)})">
-          <h3>${t.name}</h3>
-          <p>${t.description}</p>
-          ${t.params.length ? `<div class="params">params: ${t.params.join(', ')}</div>` : '<div class="params">no params</div>'}
-        </div>`).join('')}
-      </div>
+      <h2>Tools — Try It Live (${tools.length} tools)</h2>
+      ${(() => {
+        const categories: Record<string, typeof tools> = {};
+        tools.forEach(t => { const cat = (t as any).category || "Other"; if (!categories[cat]) categories[cat] = []; categories[cat].push(t); });
+        return Object.entries(categories).map(([cat, catTools]) => `
+          <h3 style="color:#6366f1;margin:1.5rem 0 0.8rem;font-size:1.1rem">${cat} (${catTools.length})</h3>
+          <div class="tool-grid">
+            ${catTools.map(t => `
+            <div class="tool-card" onclick="openTool('${t.name}', ${JSON.stringify(t.params)})">
+              <h3>${t.name}</h3>
+              <p>${t.description}</p>
+              ${t.params.length ? `<div class="params">params: ${t.params.join(', ')}</div>` : '<div class="params">no params</div>'}
+            </div>`).join('')}
+          </div>`).join('');
+      })()}
     </div>
 
     <div class="section">

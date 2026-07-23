@@ -55,9 +55,12 @@ export function registerDeFiTools(mcpServer: any, publicClient: PublicClient) {
     { token: z.string().describe("Token symbol (e.g., 'ETH', 'BTC', 'USDC', 'AAPL', 'TSLA')") },
     async ({ token }: { token: string }) => {
       try {
-        const response = await fetch(`${REDSTONE_API}/prices/latest?symbol=${token.toUpperCase()}&provider=redstone`);
+        const response = await fetch(`${REDSTONE_API}/prices?symbol=${token.toUpperCase()}&provider=redstone&limit=1`);
         const data = await response.json();
-        return { content: [{ type: "text" as const, text: JSON.stringify({ token: token.toUpperCase(), price: data.value, timestamp: new Date(data.timestamp).toISOString(), source: "RedStone Oracle" }, null, 2) }] };
+        if (Array.isArray(data) && data.length > 0) {
+          return { content: [{ type: "text" as const, text: JSON.stringify({ token: token.toUpperCase(), price: data[0].value, timestamp: new Date(data[0].timestamp).toISOString(), source: "RedStone Oracle" }, null, 2) }] };
+        }
+        return { content: [{ type: "text" as const, text: JSON.stringify({ error: `No price data for ${token}` }, null, 2) }] };
       } catch (error) { return { content: [{ type: "text" as const, text: JSON.stringify({ error: `Failed to fetch price for ${token}`, details: error instanceof Error ? error.message : "Unknown error" }, null, 2) }] }; }
     }
   );
