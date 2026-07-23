@@ -2,81 +2,57 @@
 
 MCP (Model Context Protocol) server for the [GIWA blockchain](https://giwa.io) — an OP Stack Layer 2 by Upbit/Dunamu.
 
-Enables AI agents and LLMs to interact with GIWA chain: query balances, read/write contracts, use Flashblocks (200ms preconfirmation), manage Dojang attestations, resolve UP ID names, and more.
+**71 tools** enabling AI agents and LLMs to interact with GIWA chain.
 
-## Features
+## Live Demo
 
-### Core EVM Tools
-- `giwa_get_balance` — ETH balance
-- `giwa_get_token_balance` — ERC-20 balance
-- `giwa_get_transaction` — Transaction details
-- `giwa_get_block` / `giwa_get_latest_block` — Block info
-- `giwa_read_contract` / `giwa_write_contract` — Contract interaction
-- `giwa_estimate_gas` — Gas estimation
-- `giwa_transfer_eth` / `giwa_transfer_erc20` — Token transfers
-- `giwa_multicall` — Batched contract reads
-- `giwa_get_logs` — Event logs
+**https://giwa.gogettest.online/** — Interactive web UI with all 71 tools
 
-### GIWA Flashblocks (Unique)
-- `giwa_flashblocks_call` — ~200ms preconfirmed reads
-- `giwa_flashblocks_get_balance` — Pending balance
-- `giwa_flashblocks_get_logs` — Pending logs
-- `giwa_flashblocks_simulate` — Pre-flight simulation
-- `giwa_flashblocks_estimate_gas` — Pending gas estimate
+## Tool Categories (12)
 
-### Dojang Attestations
-- `giwa_dojang_get_attestation` — Fetch attestation by UID
-- `giwa_dojang_is_valid` — Check validity
-- `giwa_dojang_attest` — Create attestation
-- `giwa_dojang_revoke` — Revoke attestation
-- `giwa_dojang_list_schemas` — Known schemas
+### EVM Core (12 tools)
+`giwa_get_balance` `giwa_get_token_balance` `giwa_get_transaction` `giwa_get_block` `giwa_get_latest_block` `giwa_read_contract` `giwa_write_contract` `giwa_estimate_gas` `giwa_transfer_eth` `giwa_transfer_erc20` `giwa_multicall` `giwa_get_logs`
 
-### UP ID (ENS-based naming)
-- `giwa_upid_resolve` — Name → address
-- `giwa_upid_reverse` — Address → name
-- `giwa_upid_get_text` — Text records
-- `giwa_upid_get_contenthash` — Content hash
+### Flashblocks (5 tools)
+`giwa_flashblocks_call` `giwa_flashblocks_get_balance` `giwa_flashblocks_get_logs` `giwa_flashblocks_simulate` `giwa_flashblocks_estimate_gas`
 
-### DeFi / Oracles
-- `giwa_get_token_info` — Token metadata
-- `giwa_get_weth_balance` — WETH balance
-- `giwa_get_allowance` — ERC-20 allowance
-- `giwa_get_price_redstone` — RedStone price feeds (300+ assets)
-- `giwa_get_price_pyth` — Pyth Network prices (on-chain)
-- `giwa_list_known_contracts` — Pre-deployed contracts
+### Dojang Attestations (4 tools)
+`giwa_dojang_get_attestation` `giwa_dojang_is_valid` `giwa_dojang_attest` `giwa_dojang_revoke` `giwa_dojang_list_schemas`
 
-### Account Abstraction (ERC-4337)
-- `giwa_aa_get_nonce` — Smart account nonce
-- `giwa_aa_get_deposit` — EntryPoint deposit
-- `giwa_aa_estimate_userop_gas` — UserOp gas estimate
-- `giwa_aa_build_userop` — Build UserOperation
-- `giwa_aa_list_entrypoints` — Supported entry points
+### UP ID (4 tools)
+`giwa_upid_resolve` `giwa_upid_reverse` `giwa_upid_get_text` `giwa_upid_get_contenthash`
 
-## Installation
+### DeFi / Oracles (6 tools)
+`giwa_get_token_info` `giwa_get_weth_balance` `giwa_get_allowance` `giwa_get_price_redstone` `giwa_get_price_pyth` `giwa_list_known_contracts`
 
-```bash
-npm install giwa-mcp-server
-```
+### Account Abstraction (5 tools)
+`giwa_aa_get_nonce` `giwa_aa_get_deposit` `giwa_aa_estimate_userop_gas` `giwa_aa_build_userop` `giwa_aa_list_entrypoints`
 
-Or run directly with npx:
+### Bridge (5 tools)
+`giwa_bridge_deposit_eth` `giwa_bridge_withdraw_eth` `giwa_bridge_estimate_time` `giwa_bridge_get_status` `giwa_bridge_list_tokens`
+
+### Faucet (3 tools)
+`giwa_faucet_info` `giwa_faucet_check_balance` `giwa_faucet_drip`
+
+### AI Agent (7 tools)
+`giwa_agent_create_wallet` `giwa_agent_generate_mnemonic` `giwa_agent_get_portfolio` `giwa_agent_get_tx_history` `giwa_agent_get_token_transfers` `giwa_agent_execute_strategy` `giwa_agent_estimate_strategy_cost`
+
+### NFT (6 tools)
+`giwa_nft_get_info` `giwa_nft_get_owner` `giwa_nft_get_collection` `giwa_nft_detect_standard` `giwa_nft_transfer` `giwa_nft_get_contract_info`
+
+### Developer Tools (8 tools)
+`giwa_verify_contract` `giwa_get_contract_source` `giwa_decode_tx_input` `giwa_decode_event_log` `giwa_simulate_transaction` `giwa_get_storage_slot` `giwa_get_bytecode` `giwa_get_transaction_receipt`
+
+### Analytics (6 tools)
+`giwa_get_chain_stats` `giwa_get_token_holders` `giwa_get_token_transfers` `giwa_get_address_details` `giwa_get_block_range` `giwa_get_pending_transactions`
+
+## Quick Start
 
 ```bash
 npx giwa-mcp-server
 ```
 
-## Configuration
-
-Create a `.env` file:
-
-```env
-GIWA_RPC_URL=https://sepolia-rpc.giwa.io
-PRIVATE_KEY=0x...          # Optional: for write operations
-BLOCKSCOUT_API_URL=https://sepolia-explorer.giwa.io/api
-```
-
-## Usage with Claude Desktop
-
-Add to your Claude Desktop config (`claude_desktop_config.json`):
+## Claude Desktop Config
 
 ```json
 {
@@ -92,75 +68,32 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
 }
 ```
 
-With private key for write operations:
-
-```json
-{
-  "mcpServers": {
-    "giwa": {
-      "command": "npx",
-      "args": ["giwa-mcp-server"],
-      "env": {
-        "GIWA_RPC_URL": "https://sepolia-rpc.giwa.io",
-        "PRIVATE_KEY": "0xYOUR_PRIVATE_KEY"
-      }
-    }
-  }
-}
-```
-
-## Usage with Cursor
-
-Add to `.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "giwa": {
-      "command": "npx",
-      "args": ["giwa-mcp-server"]
-    }
-  }
-}
-```
-
-## Development
+## HTTP API
 
 ```bash
-git clone https://github.com/Alicepoltora/giwa-mcp-server.git
-cd giwa-mcp-server
-npm install
-npm run dev
+# List all tools
+curl https://giwa.gogettest.online/api/tools
+
+# Call a tool
+curl -X POST https://giwa.gogettest.online/api/tools/giwa_get_balance \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0x..."}'
+
+# Health check
+curl https://giwa.gogettest.online/health
 ```
 
-Build:
-
-```bash
-npm run build
-npm start
-```
-
-## Network Info
+## Network
 
 | Property | Value |
 |----------|-------|
 | Network | GIWA Sepolia (testnet) |
 | Chain ID | 91342 |
 | RPC | https://sepolia-rpc.giwa.io |
-| Flashblocks RPC | https://sepolia-rpc-flashblocks.giwa.io |
+| Flashblocks | https://sepolia-rpc-flashblocks.giwa.io |
 | Explorer | https://sepolia-explorer.giwa.io |
 | Bridge | https://sepolia-bridge.giwa.io |
-| Block Time | 1 second |
-| Preconfirmation | ~200ms (Flashblocks) |
-
-## Why GIWA MCP?
-
-- **First MCP server for GIWA** — no alternatives exist
-- **Flashblocks integration** — unique 200ms preconfirmation feature
-- **Dojang attestations** — on-chain KYC/verification via UPbit
-- **UP ID support** — GIWA's native naming system
-- **ERC-4337 ready** — Account Abstraction support
-- **30+ tools** — comprehensive blockchain interaction
+| Faucet | https://faucet.giwa.io |
 
 ## License
 
